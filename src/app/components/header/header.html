@@ -1,0 +1,80 @@
+<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl">
+  <div class="mx-auto max-w-5xl px-4 sm:px-8">
+    <div class="flex items-center justify-between px-0 py-4">
+      <a
+        href="#"
+        class="btn-hover flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold tracking-tight"
+        style="
+          background-color: var(--bg-surface);
+          border: 1px solid var(--border);
+          color: var(--text-primary);
+        "
+      >
+        JP
+      </a>
+      <nav class="flex items-center gap-8">
+        <a
+          href="#work"
+          class="link-underline text-xs tracking-widest uppercase"
+          style="color: var(--text-muted)"
+          >Work</a
+        >
+        <a
+          href="#experience"
+          class="link-underline text-xs tracking-widest uppercase"
+          style="color: var(--text-muted)"
+          >Experience</a
+        >
+        <a
+          href="#contact"
+          class="link-underline text-xs tracking-widest uppercase"
+          style="color: var(--text-muted)"
+          >Contact</a
+        >
+        <button
+          (click)="theme.toggle()"
+          class="btn-hover w-9 h-9 flex items-center justify-center rounded-full cursor-pointer"
+          style="
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+          "
+          [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        >
+          @if (theme.isDark()) {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+              />
+            </svg>
+          } @else {
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          }
+        </button>
+      </nav>
+    </div>
+  </div>
+</header>

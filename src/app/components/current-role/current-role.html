@@ -1,0 +1,102 @@
+<div class="relative h-full">
+  <!-- Dimming backdrop shown while a video is playing -->
+  <div
+    #backdrop
+    class="fixed inset-0 z-40 bg-black/60 pointer-events-none"
+    style="opacity: 0; visibility: hidden"
+  ></div>
+
+  <p class="text-xs tracking-widest uppercase mb-6" style="color: var(--text-muted)">
+    Work experience
+  </p>
+
+  <div #list>
+    @for (entry of roles(); track entry.company; let last = $last) {
+      <div
+        data-role-row
+        [style.border-bottom]="last ? 'none' : '1px solid var(--border)'"
+        [class.pb-5]="!last"
+        [class.mb-5]="!last"
+      >
+        <div class="row-hover group/row flex items-center gap-3 -mx-3 px-3 py-2">
+          <a
+            [href]="entry.companyUrl"
+            target="_blank"
+            rel="noopener"
+            class="flex-1 block"
+          >
+            <p
+              class="row-title text-base font-normal leading-snug"
+              style="color: var(--text-primary)"
+            >
+              @if (entry.formerly) {
+                Former {{ entry.role }}
+              } @else {
+                {{ entry.role }}
+              }
+            </p>
+            <p class="text-sm" style="color: var(--text-secondary)">{{ entry.company }}</p>
+            @if (entry.dates) {
+              <p class="text-sm mt-1" style="color: var(--text-secondary)">{{ entry.dates }}</p>
+            }
+          </a>
+
+          <!-- Play button removed for minimalist design -->
+
+          <!-- YouTube channel link (e.g. former chocolatier) -->
+          @if (entry.youtubeUrl) {
+            <a
+              [href]="entry.youtubeUrl"
+              target="_blank"
+              rel="noopener"
+              class="row-arrow shrink-0 flex items-center"
+              aria-label="YouTube channel"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"
+                />
+              </svg>
+            </a>
+          }
+
+          <!-- Always-on arrow link affordance (hidden when a YouTube icon is shown) -->
+          @if (!entry.youtubeUrl) {
+            <a
+              [href]="entry.companyUrl"
+              target="_blank"
+              rel="noopener"
+              class="row-arrow shrink-0 flex items-center"
+              aria-hidden="true"
+              tabindex="-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M7 17L17 7M7 7h10v10" />
+              </svg>
+            </a>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Mobile video modal removed for minimalist design -->
+
+  <!-- Desktop hover overlay removed for minimalist design -->
+</div>

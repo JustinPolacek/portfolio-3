@@ -1,0 +1,15 @@
+<!--
+  Padding BELOW only. It gives the reveal scroll distance to play out over — the
+  passage is a few lines tall, so without it the whole thing completes in a couple
+  of wheel ticks. Deliberately not `py`: top padding would open a gap between the
+  heading above and this text without adding any useful range.
+-->
+<div #root [class]="'mwg_effect097 ' + spacing()">
+  <!--
+    The passage is one block of copy that SplitText breaks into .line / .word
+    spans at runtime, so the text stays a single readable string in the source.
+  -->
+  <p #copy [class]="typeClass()" [style.color]="color()">
+    {{ text() }}
+  </p>
+</div>

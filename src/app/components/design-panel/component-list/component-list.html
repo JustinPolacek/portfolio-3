@@ -1,0 +1,43 @@
+<div #root class="mwg_effect105">
+  <p class="text-xs tracking-widest uppercase mb-3" style="color: var(--text-muted)">Components</p>
+
+  <!--
+    One block per component: label stacked on top, its variants in a row beneath.
+    Everything animates in once as it scrolls into view and then stays put, so
+    the whole set stays comparable rather than cycling.
+  -->
+  <div class="space-y-10 pt-6 pb-10">
+    @for (gallery of galleries(); track gallery.label) {
+      <div data-gallery>
+        <p
+          data-title
+          class="text-lg sm:text-xl font-medium tracking-tight mb-3"
+          style="color: var(--text-primary)"
+        >
+          {{ gallery.label }}
+        </p>
+
+        <!--
+          One full-width column on mobile so each capture is legible, opening up
+          to four across from `sm` where there is room to compare them.
+        -->
+        <div class="flex flex-wrap gap-3">
+          @for (src of gallery.images; track src) {
+            <div
+              data-shot
+              class="basis-full sm:basis-[calc(25%-0.5625rem)] grow-0 rounded-lg overflow-hidden"
+              style="visibility: hidden; border: 1px solid rgb(108 108 108 / 22%)"
+            >
+              <img
+                [src]="src"
+                [alt]="gallery.label"
+                class="w-full h-full object-cover"
+                style="aspect-ratio: 1.55"
+              />
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<section #root class="h-full flex flex-col">
+  <p
+    data-hero-item
+    class="text-xs sm:text-sm tracking-widest uppercase mb-4"
+    style="color: var(--text-muted)"
+  ></p>
+
+  <h1
+    data-hero-item
+    class="text-[28px] leading-tight font-medium tracking-tight mb-5"
+    style="color: var(--text-primary)"
+  >
+    Justin Poláček
+  </h1>
+
+  <!-- The intro gets the word-by-word scroll reveal, matching the case studies. -->
+  <app-scroll-text
+    class="block mb-8"
+    text="I design and build polished product experiences where visual design, frontend engineering and AI-driven workflows meet."
+    typeClass="max-w-md leading-relaxed text-base sm:text-lg"
+    color="var(--text-secondary)"
+    spacing="pb-0"
+    [onLoad]="true"
+  />
+</section>

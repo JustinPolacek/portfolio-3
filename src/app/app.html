@@ -1,0 +1,22 @@
+<app-custom-cursor />
+
+<app-header />
+
+<div class="min-h-screen px-4 sm:px-8 pt-20 pb-8 sm:pb-10 max-w-5xl mx-auto">
+  <!-- Intro first, then the work itself — the projects are the strongest thing
+       on the page, so they come before the job history. -->
+  <div id="about" class="mb-10 scroll-mt-24">
+    <app-hero />
+  </div>
+  <div id="work" class="scroll-mt-24">
+    <app-project-list [projects]="projects" (openDesignPanel)="openPanel($event)" />
+  </div>
+  <div id="experience" class="mb-10 scroll-mt-24">
+    <app-current-role [roles]="roles" />
+  </div>
+  <app-contact />
+</div>
+
+<app-design-panel [project]="activeProject()" (closePanel)="closePanel()" />
+
+<router-outlet />

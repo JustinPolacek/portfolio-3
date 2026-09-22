@@ -1,0 +1,14 @@
+<div class="flex flex-wrap gap-2 mb-4">
+  @for (tag of tags(); track $index) {
+    <span
+      class="px-3 py-1 rounded-full text-xs tracking-widest uppercase"
+      style="
+        background-color: var(--chip-bg);
+        border: 1px solid var(--chip-border);
+        color: var(--chip-text);
+      "
+    >
+      {{ tag }}
+    </span>
+  }
+</div>

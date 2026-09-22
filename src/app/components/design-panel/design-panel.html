@@ -1,0 +1,259 @@
+<!--
+  Full-page overlay. No backdrop: the panel covers the viewport entirely, so
+  there is nothing behind it to dim or click through to.
+-->
+<div #panel class="fixed inset-0 z-50 flex flex-col" style="background-color: var(--bg-panel)">
+  @if (project()) {
+    <app-panel-header [title]="project()!.title" (closePanel)="closePanel.emit()" />
+
+    <!--
+      `relative` is required by GSAP: ScrollTrigger cannot resolve positions
+      against a static scroller, so the components list would never fire.
+    -->
+    <div #scroller data-lenis-prevent class="relative flex-1 overflow-y-auto w-full">
+      <!--
+        Lenis needs a single content child it can translate, separate from the
+        scrolling wrapper. The page column lives here rather than on the wrapper
+        so the smoothed element is the one that actually moves.
+      -->
+      <div #scrollContent class="px-6 py-6 space-y-8 w-full max-w-5xl mx-auto">
+        <!-- 1. Hero: the project's name, headline and tags. -->
+        <section data-reveal class="pt-8 pb-2">
+          <p
+            class="text-xs tracking-[0.2em] font-bold uppercase mb-3"
+            style="color: var(--accent-text)"
+          >
+            {{ project()!.headline }}
+          </p>
+          <h1
+            class="text-3xl sm:text-4xl font-medium tracking-tight leading-tight mb-5"
+            style="color: var(--text-primary)"
+          >
+            {{ project()!.title }}
+          </h1>
+          <div class="flex flex-wrap gap-2">
+            @for (tag of project()!.tags; track $index) {
+              <span
+                class="px-3 py-1 rounded-full text-xs tracking-wider uppercase"
+                style="
+                  background-color: var(--bg-surface);
+                  color: var(--text-muted);
+                  border: 1px solid var(--border);
+                "
+              >
+                {{ tag }}
+              </span>
+            }
+          </div>
+        </section>
+
+        <!-- 2. Hero image. -->
+        @if (heroImage()) {
+          <!-- Capped well short of the column so it reads as a figure, not a banner. -->
+          <img
+            data-reveal
+            [src]="heroImage()"
+            [alt]="project()!.title"
+            class="w-full max-w-2xl rounded-xl object-cover"
+            style="aspect-ratio: 16 / 9; border: 1px solid var(--border)"
+          />
+        }
+
+        <!--
+          3. Overview. No `data-reveal` on the section: the word-by-word reveal
+          inside is scrubbed to scroll, and a section-level fade would animate
+          the same pixels at a different time and muddy both.
+        -->
+        <section>
+          <h2
+            data-reveal
+            class="text-sm font-semibold uppercase tracking-widest mb-3"
+            style="color: var(--text-primary)"
+          >
+            Overview
+          </h2>
+          <!--
+            The overview reads as the case study's opening statement, so it gets
+            the word-by-word scroll reveal rather than sitting as flat body copy.
+          -->
+          <app-scroll-text [text]="project()!.overview ?? project()!.description" />
+
+          <dl class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-10">
+            <div>
+              <dt class="text-xs uppercase tracking-widest mb-1" style="color: var(--text-faint)">
+                Role
+              </dt>
+              <dd class="text-sm" style="color: var(--text-primary)">{{ project()!.role }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs uppercase tracking-widest mb-1" style="color: var(--text-faint)">
+                Stack
+              </dt>
+              <dd class="text-sm" style="color: var(--text-primary)">{{ project()!.stack }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs uppercase tracking-widest mb-1" style="color: var(--text-faint)">
+                Focus
+              </dt>
+              <dd class="text-sm" style="color: var(--text-primary)">{{ project()!.focus }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <!-- 4. Project goals -->
+        <section data-reveal class="pt-8" style="border-top: 1px solid var(--border)">
+          <h2
+            class="text-sm font-semibold uppercase tracking-widest mb-4"
+            style="color: var(--text-primary)"
+          >
+            Project Goals
+          </h2>
+          <ul class="space-y-3">
+            @for (goal of goals(); track $index) {
+              <li
+                class="flex gap-3 text-base leading-relaxed max-w-2xl"
+                style="color: var(--text-secondary)"
+              >
+                <span class="shrink-0 font-mono text-sm pt-0.5" style="color: var(--accent-text)">
+                  {{ '0' + ($index + 1) }}
+                </span>
+                {{ goal }}
+              </li>
+            }
+          </ul>
+        </section>
+
+        <!-- 5. App structure, with its diagram. -->
+        <section data-reveal class="pt-8" style="border-top: 1px solid var(--border)">
+          <h2
+            class="text-sm font-semibold uppercase tracking-widest mb-3"
+            style="color: var(--text-primary)"
+          >
+            App Structure
+          </h2>
+          <p class="text-base leading-relaxed mb-5 max-w-2xl" style="color: var(--text-secondary)">
+            {{ project()!.structureSummary ?? 'Add a description of how the app is organised.' }}
+          </p>
+          @if (project()!.structureImage) {
+            <img
+              [src]="project()!.structureImage"
+              alt="App structure diagram"
+              class="w-full max-w-2xl rounded-xl"
+              style="border: 1px solid var(--border)"
+            />
+          } @else {
+            <!-- Placeholder diagram until a real graphic is supplied. -->
+            <div
+              class="w-full max-w-2xl rounded-xl grid place-items-center"
+              style="
+                aspect-ratio: 2 / 1;
+                border: 1px dashed var(--border);
+                background-color: var(--bg-surface);
+              "
+            >
+              <p class="text-xs uppercase tracking-widest" style="color: var(--text-faint)">
+                Structure diagram
+              </p>
+            </div>
+          }
+        </section>
+
+        <!-- 6. Visual design, with the app in motion. -->
+        <section data-reveal class="pt-8" style="border-top: 1px solid var(--border)">
+          <h2
+            class="text-sm font-semibold uppercase tracking-widest mb-3"
+            style="color: var(--text-primary)"
+          >
+            Visual Design
+          </h2>
+          <p class="text-base leading-relaxed mb-5 max-w-2xl" style="color: var(--text-secondary)">
+            {{ project()!.visualSummary ?? 'Add a summary of the visual direction.' }}
+          </p>
+          @if (visualVideo()) {
+            <video
+              [src]="visualVideo()"
+              [muted]="true"
+              autoplay
+              loop
+              playsinline
+              preload="auto"
+              class="w-auto rounded-xl object-cover"
+              style="max-height: 20rem; border: 1px solid var(--border)"
+            ></video>
+          }
+        </section>
+
+        <!--
+          7. Feature walkthrough — Entities, Properties, Rulebook Editor,
+          Publishing. Data-driven so each project can describe its own features
+          without repeating this markup four times.
+        -->
+        @for (feature of features(); track feature.title) {
+          <section data-reveal class="pt-8" style="border-top: 1px solid var(--border)">
+            <h2
+              class="text-sm font-semibold uppercase tracking-widest mb-3"
+              style="color: var(--text-primary)"
+            >
+              {{ feature.title }}
+            </h2>
+            <p class="text-base leading-relaxed max-w-2xl" style="color: var(--text-secondary)">
+              {{ feature.body }}
+            </p>
+            @if (feature.video) {
+              <video
+                [src]="feature.video"
+                [muted]="true"
+                autoplay
+                loop
+                playsinline
+                preload="auto"
+                class="w-auto rounded-xl object-cover mt-5"
+                style="max-height: 20rem; border: 1px solid var(--border)"
+              ></video>
+            } @else if (feature.image) {
+              <img
+                [src]="feature.image"
+                [alt]="feature.title"
+                class="w-full max-w-2xl rounded-xl object-cover mt-5"
+                style="border: 1px solid var(--border)"
+              />
+            }
+          </section>
+        }
+
+        <!--
+        8. Design system. The colours and components are the scroll-driven
+        sections themselves, so the heading just introduces them.
+      -->
+        <section data-reveal class="pt-8" style="border-top: 1px solid var(--border)">
+          <h2
+            class="text-sm font-semibold uppercase tracking-widest"
+            style="color: var(--text-primary)"
+          >
+            Design System
+          </h2>
+        </section>
+
+        <!-- Components: scroll-driven sweep, so it needs vertical room to run. -->
+        <div data-reveal>
+          <app-component-list [items]="componentItems" />
+        </div>
+
+        <!-- Colors: scroll-driven too, so it follows rather than competing. -->
+        <div data-reveal>
+          <app-color-hover-list [colors]="swatches" />
+        </div>
+
+        <!-- Developer handoff closes the case study. -->
+        <div data-reveal class="pt-8" style="border-top: 1px solid var(--border)">
+          <p class="text-xs tracking-widest uppercase mb-5" style="color: var(--text-faint)">
+            Developer Handoff
+          </p>
+          <app-npm-handoff />
+        </div>
+      </div>
+    </div>
+
+    <app-panel-footer [url]="project()!.url ?? ''" />
+  }
+</div>

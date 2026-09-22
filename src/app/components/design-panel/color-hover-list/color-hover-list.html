@@ -1,0 +1,47 @@
+<div #root class="mwg_effect108">
+  <p class="text-xs tracking-widest uppercase mb-3" style="color: var(--text-muted)">Colors</p>
+
+  <!--
+    Each colour owns its own ramp, stacked in normal flow. The swatches animate
+    in once as the ramp scrolls into view and then stay put — nothing is shared
+    between colours, so nothing has to re-colour on later scrolls.
+  -->
+  <div class="space-y-10 pt-6 pb-10">
+    @for (ramp of ramps(); track ramp.name) {
+      <div data-ramp>
+        <p
+          data-title
+          class="text-lg sm:text-xl font-medium tracking-tight mb-3"
+          style="color: var(--text-primary)"
+        >
+          {{ ramp.name }}
+        </p>
+
+        <!--
+          The label sits above the ramp so the swatches get the full width, and
+          the ramp WRAPS on mobile — six per row rather than twelve. Twelve
+          across a 342px column left each swatch ~25px, too narrow to be square
+          or to hold its number; six makes them ~54px, so the squares stay
+          square and the stop numbers read upright at every width.
+        -->
+        <div class="grid grid-cols-6 sm:grid-cols-12" style="gap: 4px">
+          @for (step of ramp.steps; track step.stop) {
+            <div data-step class="min-w-0 rounded-md overflow-hidden" style="visibility: hidden">
+              <div
+                class="w-full aspect-square flex items-end justify-center pb-1"
+                [style.background]="step.hex"
+              >
+                <span
+                  class="text-[11px] sm:text-xs font-mono leading-none tabular-nums"
+                  [style.color]="step.onDark ? 'rgb(255 255 255 / 80%)' : 'rgb(0 0 0 / 65%)'"
+                >
+                  {{ step.stop }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,5 @@
+<div class="mb-8">
+  <p class="text-xs tracking-widest text-gray-500 uppercase mb-4">Recent Work</p>
+
+  <app-project-gallery [projects]="projects()" (openProject)="openDesignPanel.emit($event)" />
+</div>

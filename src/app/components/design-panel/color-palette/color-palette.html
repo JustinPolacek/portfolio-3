@@ -1,0 +1,13 @@
+<div>
+  <p class="text-xs tracking-widest uppercase mb-3" style="color: var(--text-muted)">
+    Color Palette
+  </p>
+  <div class="grid grid-cols-5 gap-3">
+    @for (swatch of swatches(); track swatch.name) {
+      <div>
+        <div class="h-14 rounded-xl mb-1.5" [style.background]="swatch.hex"></div>
+        <p class="text-xs" style="color: var(--text-secondary)">{{ swatch.name }}</p>
+      </div>
+    }
+  </div>
+</div>

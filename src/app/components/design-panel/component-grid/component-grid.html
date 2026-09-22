@@ -1,0 +1,15 @@
+<div>
+  <p class="text-xs tracking-widest uppercase mb-3" style="color: var(--text-muted)">Components</p>
+  <div class="grid grid-cols-2 gap-3">
+    @for (label of ['Button', 'Card', 'Tag', 'Input']; track label) {
+      <div
+        class="rounded-xl px-5 py-4 flex items-center justify-center min-h-[4rem]"
+        style="border: 1px solid var(--border); background-color: var(--bg-surface)"
+      >
+        <p class="text-xs tracking-widest uppercase" style="color: var(--text-muted)">
+          {{ label }}
+        </p>
+      </div>
+    }
+  </div>
+</div>

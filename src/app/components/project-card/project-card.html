@@ -1,0 +1,38 @@
+<div
+  #card
+  class="mb-6 rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2"
+  style="border: 1px solid var(--border)"
+>
+  <app-project-card-media
+    [video]="project().video"
+    [image]="project().images[0]"
+    [alt]="project().title"
+  />
+
+  <div class="flex flex-col justify-center p-5 sm:p-6">
+    <p class="text-xs tracking-[0.2em] font-bold uppercase mb-2" style="color: var(--accent-text)">
+      {{ project().headline }}
+    </p>
+
+    <h2
+      class="text-2xl sm:text-3xl font-bold tracking-tight leading-none mb-3"
+      style="color: var(--text-primary)"
+    >
+      {{ project().title }}
+    </h2>
+
+    <p class="text-sm leading-relaxed mb-4 max-w-md" style="color: var(--text-secondary)">
+      {{ project().description }}
+    </p>
+
+    <p class="text-xs font-medium mb-5" style="color: var(--text-primary)">
+      {{ project().stack }}
+    </p>
+
+    <app-project-card-actions
+      [url]="project().url"
+      [showNext]="false"
+      (openDesignPanel)="openDesignPanel.emit(project())"
+    />
+  </div>
+</div>
