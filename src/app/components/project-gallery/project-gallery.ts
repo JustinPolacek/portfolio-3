@@ -69,25 +69,43 @@ export class ProjectGallery implements AfterViewInit, OnDestroy {
     const root = this.rootRef()?.nativeElement;
     if (!root) return;
 
-    // One trigger per card so each rises as it reaches the viewport, rather than
-    // the whole stack firing together when the section's top clears the fold.
-    root.querySelectorAll<HTMLElement>('[data-card]').forEach((card) => {
-      this.tweens.push(
-        gsap.fromTo(
-          card,
-          { autoAlpha: 0, y: 64 },
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: { trigger: card, start: 'top 88%', once: true },
-          },
-        ),
-      );
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-card]'));
+
+    // One shared trigger on the section, with the cards staggered against each
+    // other, rather than a separate trigger per card: per-card triggers meant
+    // that on a short page — where the whole gallery is already in view at
+    // load — every card's own 'top 88%' line was already crossed at creation,
+    // so they all fired in the same tick with no cascade at all.
+    gsap.set(cards, { autoAlpha: 0, y: 64 });
+    this.tweens.push(
+      gsap.to(cards, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.15,
+        // On a short page the gallery is already in view when this trigger is
+        // created, so it fires immediately — this delay holds it back just
+        // long enough for the hero's own reveal ("Justin Poláček" + intro) to
+        // lead, rather than both playing over each other on load. Scrolled
+        // into view later instead, the delay is negligible next to the time
+        // spent scrolling down to it.
+        delay: 0.5,
+        scrollTrigger: { trigger: root, start: 'top 88%', once: true },
+      }),
+    );
+
+    // The media's true size (video metadata, decoded image) can still be
+    // settling after this first measurement, shifting the section's height and
+    // therefore the trigger's start position — refresh once assets are ready so
+    // the reveal doesn't fire against a stale layout.
+    const media = root.querySelectorAll<HTMLImageElement | HTMLVideoElement>('img, video');
+    media.forEach((el) => {
+      const event = el instanceof HTMLVideoElement ? 'loadedmetadata' : 'load';
+      el.addEventListener(event, () => ScrollTrigger.refresh(), { once: true });
     });
 
-    ScrollTrigger.refresh();
+    requestAnimationFrame(() => ScrollTrigger.refresh());
   }
 
   ngOnDestroy(): void {

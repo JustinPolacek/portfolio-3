@@ -27,12 +27,13 @@ export class Contact implements OnInit, AfterViewInit, OnDestroy {
 
   private readonly rootRef = viewChild<ElementRef<HTMLElement>>('root');
   private timer?: ReturnType<typeof setInterval>;
+  private reveal?: gsap.core.Tween;
 
   ngAfterViewInit(): void {
     const root = this.rootRef()?.nativeElement;
     if (!root) return;
     const items = root.querySelectorAll('[data-contact-item]');
-    gsap.from(items, {
+    this.reveal = gsap.from(items, {
       opacity: 0,
       y: 24,
       duration: 0.7,
@@ -54,6 +55,8 @@ export class Contact implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.timer) clearInterval(this.timer);
+    this.reveal?.scrollTrigger?.kill();
+    this.reveal?.kill();
   }
 
   private updateClock(): void {

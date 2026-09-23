@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnDestroy, inject, signal } from '@angular/core';
+import gsap from 'gsap';
 import { ThemeService } from '../../services/theme.service';
 
 const SECTION_IDS = ['work', 'experience', 'contact'] as const;
@@ -15,6 +16,7 @@ export class Header implements AfterViewInit, OnDestroy {
   protected readonly activeSection = signal<SectionId>('work');
 
   private observer?: IntersectionObserver;
+  private tween?: gsap.core.Tween;
 
   ngAfterViewInit(): void {
     // Tracks whichever section currently covers the most of the viewport, so
@@ -36,9 +38,32 @@ export class Header implements AfterViewInit, OnDestroy {
     );
 
     sections.forEach((section) => this.observer!.observe(section));
+
+    // The nav pieces (logo, toggle, bottom pill / sidebar) fade and drop in
+    // alongside the hero rather than just appearing — [data-nav-item] starts
+    // hidden inline in the template so there's no flash before this runs.
+    // The header's top-level pieces are fixed-position siblings rather than
+    // children of one wrapper element, so this queries from the document
+    // instead of a local root ref — safe since app-header is a page singleton.
+    const items = document.querySelectorAll<HTMLElement>('[data-nav-item]');
+    if (!items.length) return;
+
+    gsap.set(items, { opacity: 0, y: -16, willChange: 'transform, opacity' });
+    requestAnimationFrame(() => {
+      this.tween = gsap.to(items, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: 'power3.out',
+        stagger: 0.08,
+        force3D: true,
+        clearProps: 'willChange',
+      });
+    });
   }
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.tween?.kill();
   }
 }

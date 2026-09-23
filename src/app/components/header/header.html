@@ -8,23 +8,49 @@
 -->
 <a
   href="#"
+  data-nav-item
   class="btn-hover md:hidden fixed top-4 left-4 z-50 flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold tracking-tight backdrop-blur-xl"
   style="
     background-color: var(--bg-surface);
     border: 1px solid var(--border);
     color: var(--text-primary);
+    opacity: 0;
   "
 >
   JP
 </a>
 
 <button
+  data-nav-item
+  class="btn-hover md:hidden fixed top-4 right-16 z-50 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-xl"
+  style="
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    opacity: 0;
+  "
+  aria-label="Play showreel"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M8 5v14l11-7z" />
+  </svg>
+</button>
+
+<button
   (click)="theme.toggle()"
+  data-nav-item
   class="btn-hover md:hidden fixed top-4 right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-xl"
   style="
     background-color: var(--bg-surface);
     border: 1px solid var(--border);
     color: var(--text-primary);
+    opacity: 0;
   "
   [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
 >
@@ -70,8 +96,9 @@
   section changes.
 -->
 <nav
+  data-nav-item
   class="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 rounded-full px-1.5 py-1.5 backdrop-blur-xl"
-  style="background-color: var(--bg-surface); border: 1px solid var(--border)"
+  style="background-color: var(--bg-surface); border: 1px solid var(--border); opacity: 0"
 >
   @for (section of ['work', 'experience', 'contact']; track section) {
     <a
@@ -95,8 +122,9 @@
 </nav>
 
 <header
+  data-nav-item
   class="hidden md:block fixed top-0 bottom-0 left-0 right-auto z-50 backdrop-blur-xl w-20 border-r"
-  style="border-color: var(--border)"
+  style="border-color: var(--border); opacity: 0"
 >
   <div class="mx-auto max-w-5xl px-4 sm:px-8 md:mx-0 md:max-w-none md:h-full md:px-0 md:flex md:flex-col md:items-center">
     <div class="flex items-center justify-center px-0 py-4 md:flex-col md:justify-start md:h-full md:py-6 md:gap-6">
@@ -132,8 +160,27 @@
         >
       </nav>
       <button
-        (click)="theme.toggle()"
         class="btn-hover flex w-9 h-9 items-center justify-center rounded-full cursor-pointer md:mt-auto"
+        style="
+          background-color: var(--bg-surface);
+          border: 1px solid var(--border);
+          color: var(--text-primary);
+        "
+        aria-label="Play showreel"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </button>
+      <button
+        (click)="theme.toggle()"
+        class="btn-hover flex w-9 h-9 items-center justify-center rounded-full cursor-pointer"
         style="
           background-color: var(--bg-surface);
           border: 1px solid var(--border);

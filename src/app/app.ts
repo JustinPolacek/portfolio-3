@@ -1,4 +1,4 @@
-import { Component, OnDestroy, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -27,10 +27,11 @@ import { Project } from './components/project-card/project-card';
     CustomCursor,
   ],
 })
-export class App implements OnDestroy {
+export class App implements AfterViewInit, OnDestroy {
   private readonly scrollService = inject(ScrollService);
   private lenis?: Lenis;
   private readonly tickerUpdate = (time: number) => this.lenis?.raf(time * 1000);
+  private readonly onWindowLoad = () => ScrollTrigger.refresh();
 
   constructor() {
     // Angular fires ngAfterViewInit bottom-up: every child component (hero,
@@ -59,9 +60,32 @@ export class App implements OnDestroy {
     document.addEventListener('click', this.onAnchorClick);
   }
 
+  ngAfterViewInit(): void {
+    // Runs after every child's own ngAfterViewInit (view init fires bottom-up),
+    // so every section's ScrollTrigger has already been created by this point.
+    // A couple of them (current-role, contact) never call refresh() themselves
+    // after creating theirs, so on a hard refresh their trigger start positions
+    // can get measured before layout has fully settled — on a page tall enough
+    // that those sections start already past their 'top 80%' line, the
+    // animation is skipped rather than played. One refresh here, once layout
+    // has had a beat to settle, re-measures every trigger site page-wide.
+    requestAnimationFrame(() => ScrollTrigger.refresh());
+
+    // Images, videos and web fonts can keep shifting layout after that first
+    // pass, so refresh again once the window reports everything loaded.
+    if (typeof window !== 'undefined') {
+      if (document.readyState === 'complete') {
+        this.onWindowLoad();
+      } else {
+        window.addEventListener('load', this.onWindowLoad);
+      }
+    }
+  }
+
   ngOnDestroy(): void {
     gsap.ticker.remove(this.tickerUpdate);
     document.removeEventListener('click', this.onAnchorClick);
+    window.removeEventListener('load', this.onWindowLoad);
     this.lenis?.destroy();
   }
 
