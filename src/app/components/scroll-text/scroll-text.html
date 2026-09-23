@@ -9,7 +9,13 @@
     The passage is one block of copy that SplitText breaks into .line / .word
     spans at runtime, so the text stays a single readable string in the source.
   -->
-  <p #copy [class]="typeClass()" [style.color]="color()">
+  <!--
+    Starts invisible in markup, not just via GSAP: SplitText's word spans don't
+    exist until ngAfterViewInit runs, so there's no per-word hook to pre-hide
+    before then. Hiding the whole paragraph up front avoids a flash of the
+    un-split text at full opacity between first paint and that split running.
+  -->
+  <p #copy [class]="typeClass()" [style.color]="color()" style="opacity: 0">
     {{ text() }}
   </p>
 </div>

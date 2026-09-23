@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnDestroy, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import Lenis from 'lenis';
 import gsap from 'gsap';
@@ -27,12 +27,18 @@ import { Project } from './components/project-card/project-card';
     CustomCursor,
   ],
 })
-export class App implements AfterViewInit, OnDestroy {
+export class App implements OnDestroy {
   private readonly scrollService = inject(ScrollService);
   private lenis?: Lenis;
   private readonly tickerUpdate = (time: number) => this.lenis?.raf(time * 1000);
 
-  ngAfterViewInit(): void {
+  constructor() {
+    // Angular fires ngAfterViewInit bottom-up: every child component (hero,
+    // current-role, contact, ...) runs its own ngAfterViewInit — and creates
+    // its ScrollTriggers — before this root component's would. Registering
+    // the plugin and standing up Lenis here instead, ahead of child view
+    // init, means those child ScrollTriggers are created against an already
+    // Lenis-synced scroll rather than racing it.
     gsap.registerPlugin(ScrollTrigger);
 
     this.lenis = new Lenis({

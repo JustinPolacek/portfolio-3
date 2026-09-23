@@ -69,6 +69,11 @@ export class ScrollText implements AfterViewInit, OnDestroy {
       wordsClass: 'word',
     });
 
+    // The paragraph itself started at opacity 0 in markup to avoid a pre-split
+    // flash of full-opacity text (see scroll-text.html); now that SplitText has
+    // wrapped it into words, hand opacity control to the per-word tween below.
+    gsap.set(copy, { opacity: 1 });
+
     // Above the fold there is no scroll to scrub against, so the reveal plays on
     // its own timeline; everywhere else the words track scroll position and
     // reverse if the viewer scrolls back.
