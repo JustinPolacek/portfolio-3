@@ -1,6 +1,105 @@
-<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl">
-  <div class="mx-auto max-w-5xl px-4 sm:px-8">
-    <div class="flex items-center justify-between px-0 py-4">
+<!--
+  Mobile: the logo floats fixed at the top-left and the theme toggle mirrors
+  it at the top-right, both separate from the bottom bar so it's free to
+  hold just the nav links. Desktop: a fixed left sidebar instead of a top
+  bar, with the logo and toggle back in their usual spots in that column, so
+  the page's centred content can sit closer to the left edge rather than
+  leaving a wide gutter under a full-width top nav.
+-->
+<a
+  href="#"
+  class="btn-hover md:hidden fixed top-4 left-4 z-50 flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold tracking-tight backdrop-blur-xl"
+  style="
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+  "
+>
+  JP
+</a>
+
+<button
+  (click)="theme.toggle()"
+  class="btn-hover md:hidden fixed top-4 right-4 z-50 w-9 h-9 flex items-center justify-center rounded-full cursor-pointer backdrop-blur-xl"
+  style="
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+  "
+  [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+>
+  @if (theme.isDark()) {
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path
+        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+      />
+    </svg>
+  } @else {
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  }
+</button>
+
+<!--
+  Mobile bottom nav: a small floating pill, centred, detached from the
+  screen edges rather than a full-width bar — closer to the tvOS-style
+  focus dock than a browser tab bar. A translucent "glass" bubble sits
+  behind whichever link is active and slides between them as the tracked
+  section changes.
+-->
+<nav
+  class="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 rounded-full px-1.5 py-1.5 backdrop-blur-xl"
+  style="background-color: var(--bg-surface); border: 1px solid var(--border)"
+>
+  @for (section of ['work', 'experience', 'contact']; track section) {
+    <a
+      [href]="'#' + section"
+      class="relative z-10 rounded-full px-4 py-2 text-[11px] font-semibold tracking-wide uppercase transition-colors duration-300"
+      [style.color]="activeSection() === section ? 'var(--text-primary)' : 'var(--text-muted)'"
+    >
+      @if (activeSection() === section) {
+        <span
+          class="absolute inset-0 -z-10 rounded-full transition-all duration-300"
+          style="
+            background-color: var(--bg-page);
+            border: 1px solid var(--border-strong);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+          "
+        ></span>
+      }
+      {{ section === 'work' ? 'Work' : section === 'experience' ? 'Experience' : 'Contact' }}
+    </a>
+  }
+</nav>
+
+<header
+  class="hidden md:block fixed top-0 bottom-0 left-0 right-auto z-50 backdrop-blur-xl w-20 border-r"
+  style="border-color: var(--border)"
+>
+  <div class="mx-auto max-w-5xl px-4 sm:px-8 md:mx-0 md:max-w-none md:h-full md:px-0 md:flex md:flex-col md:items-center">
+    <div class="flex items-center justify-center px-0 py-4 md:flex-col md:justify-start md:h-full md:py-6 md:gap-6">
       <a
         href="#"
         class="btn-hover flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold tracking-tight"
@@ -12,69 +111,69 @@
       >
         JP
       </a>
-      <nav class="flex items-center gap-8">
+      <nav class="flex items-center gap-8 md:flex-col md:items-center md:gap-6">
         <a
           href="#work"
-          class="link-underline text-xs tracking-widest uppercase"
+          class="link-underline text-xs tracking-widest uppercase md:[writing-mode:vertical-rl]"
           style="color: var(--text-muted)"
           >Work</a
         >
         <a
           href="#experience"
-          class="link-underline text-xs tracking-widest uppercase"
+          class="link-underline text-xs tracking-widest uppercase md:[writing-mode:vertical-rl]"
           style="color: var(--text-muted)"
           >Experience</a
         >
         <a
           href="#contact"
-          class="link-underline text-xs tracking-widest uppercase"
+          class="link-underline text-xs tracking-widest uppercase md:[writing-mode:vertical-rl]"
           style="color: var(--text-muted)"
           >Contact</a
         >
-        <button
-          (click)="theme.toggle()"
-          class="btn-hover w-9 h-9 flex items-center justify-center rounded-full cursor-pointer"
-          style="
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-          "
-          [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
-        >
-          @if (theme.isDark()) {
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="4" />
-              <path
-                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
-              />
-            </svg>
-          } @else {
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          }
-        </button>
       </nav>
+      <button
+        (click)="theme.toggle()"
+        class="btn-hover flex w-9 h-9 items-center justify-center rounded-full cursor-pointer md:mt-auto"
+        style="
+          background-color: var(--bg-surface);
+          border: 1px solid var(--border);
+          color: var(--text-primary);
+        "
+        [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+      >
+        @if (theme.isDark()) {
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+            />
+          </svg>
+        } @else {
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        }
+      </button>
     </div>
   </div>
 </header>

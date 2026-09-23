@@ -1,118 +1,90 @@
 @if (hasProjects()) {
   <!--
-    Three across on desktop, one on mobile. The gallery sits inside the page's
-    centred max-w-5xl column, so it inherits the hero's width and padding.
+    A plain grid rather than CSS-columns masonry: with only a handful of
+    cards, column-based masonry fills the first column(s) top to bottom and
+    leaves the last one mostly empty, reading as lopsided whitespace on the
+    right. A grid keeps every column's top row aligned instead. Each card
+    still sizes its own media to its natural aspect ratio, so a portrait
+    clip renders full-height uncropped rather than getting cropped like it
+    would in a uniform fixed-height cell. One column on mobile, three on
+    desktop. The gallery sits inside the page's centred max-w-5xl column, so
+    it inherits the hero's width and padding.
   -->
-  <section #root class="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+  <section #root class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 items-start">
     @for (slide of slides(); track slide.project.title) {
       <!--
-        Minimal card: a pale panel with the media floated in the middle and a
-        lot of breathing room around it. data-card is the slide-up target;
-        visibility is set by GSAP's autoAlpha.
+        A card in two parts, mirroring the reference: a dark media panel with
+        a floating "Post" chip up top, and a separate footer strip below it
+        holding an avatar + the project name — not overlaid on the media.
+        data-card is the slide-up target; visibility is set by GSAP's autoAlpha.
       -->
       <div
         data-card
-        class="group relative flex flex-col rounded-3xl overflow-hidden p-5"
-        style="visibility: hidden; background-color: var(--bg-panel)"
+        (click)="openProject.emit(slide.project)"
+        class="group rounded-xl md:rounded-2xl overflow-hidden cursor-pointer"
+        style="visibility: hidden; background-color: var(--bg-panel); border: 1px solid var(--border)"
       >
-        <!-- Eyebrow pill, top-left, as its own chip on the panel. -->
-        <span
-          class="self-start rounded-full px-4 py-2 text-[11px] font-mono tracking-widest uppercase"
-          style="background-color: var(--bg-page); color: var(--text-primary)"
-        >
-          {{ slide.project.headline }}
-        </span>
-
-        <!--
-          The media floats in the middle of the card with generous space above
-          and below — the white space is the point, so the cell is capped well
-          short of the card's full width.
-        -->
-        <div class="flex-1 flex items-center justify-center py-12">
-          <!--
-            A FIXED cell for every card, so three cards with differently shaped
-            media still line up. The media is fitted inside rather than filling
-            it: a portrait clip and a landscape still both sit centred in the
-            same box, which is what keeps the row visually even.
-          -->
-          <div
-            class="w-full max-w-[16rem] md:max-w-none h-[17rem] md:h-[13rem] rounded-xl flex items-center justify-center"
+        <div class="relative pt-1.5 px-1.5">
+          <span
+            class="absolute top-2 left-2 md:top-3 md:left-3 z-10 rounded-full px-2.5 py-1 text-[9px] md:text-[10px] font-semibold tracking-widest uppercase"
+            style="background-color: rgba(0, 0, 0, 0.55); color: #fff; backdrop-filter: blur(4px)"
           >
-            @if (slide.feature; as feature) {
-              @if (feature.video) {
-                <!--
-                  `[muted]` must be a property binding, not a bare attribute:
-                  browsers gate autoplay on the muted PROPERTY, which Angular
-                  does not reflect from the attribute — without it the clip is
-                  blocked from starting.
-                -->
-                <video
-                  [src]="feature.src"
-                  [muted]="true"
-                  autoplay
-                  loop
-                  playsinline
-                  preload="auto"
-                  class="w-full h-full object-cover object-top rounded-lg"
-                ></video>
-              } @else {
-                <img
-                  [src]="feature.src"
-                  alt=""
-                  class="max-w-full max-h-full object-contain rounded-lg"
-                />
-              }
+            {{ slide.project.headline }}
+          </span>
+
+          @if (slide.feature; as feature) {
+            @if (feature.video) {
+              <!--
+                `[muted]` must be a property binding, not a bare attribute:
+                browsers gate autoplay on the muted PROPERTY, which Angular
+                does not reflect from the attribute — without it the clip is
+                blocked from starting.
+              -->
+              <video
+                [src]="feature.src"
+                [muted]="true"
+                autoplay
+                loop
+                playsinline
+                preload="auto"
+                [style.aspect-ratio]="feature.ratio"
+                class="w-full h-auto max-h-[45vh] md:max-h-none object-cover rounded-lg"
+              ></video>
             } @else {
-              <div
-                class="w-full h-full rounded-lg grid place-items-center"
-                style="background-color: var(--bg-code)"
-              >
-                <p class="text-[10px] uppercase tracking-widest" style="color: var(--text-faint)">
-                  {{ slide.project.title }}
-                </p>
-              </div>
+              <img
+                [src]="feature.src"
+                alt=""
+                [style.aspect-ratio]="feature.ratio"
+                class="w-full h-auto max-h-[45vh] md:max-h-none object-cover rounded-lg"
+              />
             }
-          </div>
-        </div>
-
-        <!--
-          Title and copy sit at the foot, with room reserved below for the hover
-          actions so the buttons never land on top of the description.
-        -->
-        <div class="min-w-0 pb-12">
-          <h3 class="text-base font-semibold tracking-tight" style="color: var(--text-primary)">
-            {{ slide.project.title }}
-          </h3>
-          <p class="mt-1 text-xs leading-relaxed" style="color: var(--text-secondary)">
-            {{ slide.project.description }}
-          </p>
-        </div>
-
-        <!--
-          Actions reveal on hover in the bottom-right. Kept focusable: the group
-          also opens them on focus-within so keyboard users can reach them.
-        -->
-        <div
-          class="absolute bottom-5 right-5 flex items-center gap-2 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0"
-        >
-          @if (slide.project.url) {
-            <a
-              [href]="slide.project.url"
-              target="_blank"
-              rel="noopener"
-              class="btn-hover rounded-full px-4 py-2 text-[11px] font-semibold tracking-wide"
-              style="background-color: var(--accent); color: var(--accent-on)"
+          } @else {
+            <div
+              [style.aspect-ratio]="'4 / 3'"
+              class="w-full grid place-items-center rounded-lg"
+              style="background-color: var(--bg-code)"
             >
-              Live Site
-            </a>
+              <p class="text-[10px] uppercase tracking-widest" style="color: var(--text-faint)">
+                {{ slide.project.title }}
+              </p>
+            </div>
           }
-          <button
-            (click)="openProject.emit(slide.project)"
-            class="btn-hover rounded-full px-4 py-2 text-[11px] font-semibold tracking-wide cursor-pointer"
+        </div>
+
+        <!-- Footer strip: avatar + project name, like the reference's author row. -->
+        <div class="flex items-center gap-2.5 px-3 py-3">
+          <span
+            class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold uppercase"
             style="background-color: var(--bg-page); color: var(--text-primary)"
           >
-            Case Study
-          </button>
+            {{ slide.project.title.charAt(0) }}
+          </span>
+          <p
+            class="min-w-0 truncate text-xs md:text-sm font-semibold tracking-tight"
+            style="color: var(--text-primary)"
+          >
+            {{ slide.project.title }}
+          </p>
         </div>
       </div>
     }

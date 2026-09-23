@@ -120,10 +120,7 @@ export class App implements AfterViewInit, OnDestroy {
       focus: 'UX Flows · Components · Visual System',
       video: 'assets/project-card/images/hero-vid.mp4',
       featureVideo: 'assets/projects/rollnat-vid.mp4',
-      // 2:3 rather than the clip's true 574/1254 (0.46): showing the full frame
-      // at a readable width made the card ~900px tall. This trims ~31% off the
-      // top and bottom edges so the video can be wide without towering.
-      mediaRatio: '2 / 3',
+      mediaRatio: '574 / 1254',
       images: ['assets/projects/01.png', 'assets/projects/02.png', 'assets/projects/03.png'],
       url: 'https://rollnat1.com/',
       overview:
